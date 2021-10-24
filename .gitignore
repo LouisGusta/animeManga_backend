@@ -1,4 +1,5 @@
 node_modules/**/*
+src/controllers/md_cache
 npm-debug.*
 *.jks
 *.p8
