@@ -1,5 +1,6 @@
 node_modules/**/*
 src/controllers/md_cache
+system-commandline-sentinel-files
 npm-debug.*
 *.jks
 *.p8
