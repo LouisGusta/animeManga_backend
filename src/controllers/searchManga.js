@@ -30,14 +30,17 @@ module.exports = {
         // Aqui tem a capa do manga.
         // Aqui tem a descrição/sinopse do manga.
         // Aqui tem o genero/tipo do manga.
-        const teste = await MFA.Manga.get
         const manga = await MFA.Manga.search(req.headers.querysearch)
-        const chapter = await manga
         var itemsProcessed = 0;
         manga.forEach(async (elem, index, array) => {
             const Cover = await requireCover(elem.mainCover.id)
             const Chapters = await requireChapter(elem.id)
             const Tags = []
+
+            elem.tags.forEach((item, index) => {
+                Tags.push(item.localizedName.en)
+            })
+
             mangaList.push({
                 status: elem.status,
                 title: elem.title,
@@ -46,7 +49,7 @@ module.exports = {
                 urlCover: `https://uploads.mangadex.org//covers/${elem.id}/${Cover.data.data.attributes.fileName}`,
                 tags: Tags,
             })
-
+            
             itemsProcessed++
             if (itemsProcessed === array.length) {
                 callback()
