@@ -45,6 +45,7 @@ module.exports = {
             res.json(mangaList)
         }
 
+
     },
 }
 
