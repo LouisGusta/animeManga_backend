@@ -59,11 +59,6 @@ module.exports = {
         function callback() {
             res.json(mangaList)
         }
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 386e0d48b0f5ff7183987a526be1bfc78a219298
     },
 }
 
