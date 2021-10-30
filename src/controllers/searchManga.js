@@ -1,37 +1,58 @@
 const express = require('express');
-const MFA = require('mangadex-full-api');
 const axios = require('axios')
-const translatte = require('translatte')
 
 module.exports = {
     async indexManga(req, res) {
-
-        async function requireCover(coverId) {
-            return await axios({
-                url: `https://api.mangadex.org/cover/${coverId}`,
-                method: 'GET'
-            })
-        }
-
-        async function requireChapter(mangaId){
-            return await axios({
-                url: `https://api.mangadex.org/manga/${mangaId}/feed`,
-                method: 'GET',
-                params:{
-                    limit: 500,
-                    translatedLanguage: ['pt-br']
-                }
-            })
-        }
-
-        await MFA.login('DarksGol', 'R@ul1605', './md_cache/')
         const mangaList = []
-        // Aqui tem o ID do manga.
-        // Aqui tem a capa do manga.
-        // Aqui tem a descrição/sinopse do manga.
-        // Aqui tem o genero/tipo do manga.
-        const manga = await MFA.Manga.search(req.headers.querysearch)
         var itemsProcessed = 0;
+        
+        graphQuery = `
+        query ($page: Int, $perPage: Int, $name: String) {
+            Page (page: $page, perPage: $perPage) {
+                pageInfo {
+                    total
+                    currentPage
+                    lastPage
+                    hasNextPage
+                    perPage
+                }
+            media (search: $name, format:MANGA) {
+                id
+                status
+                format
+                bannerImage
+                coverImage{
+                    extraLarge
+                }
+                genres
+                isAdult 
+                averageScore
+                title {
+                    romaji
+                    english
+                    native
+                }
+            }
+        }
+        }
+        `
+        //async function returnAllManga(mangaName){
+            await axios({
+                url: 'https://graphql.anilist.co',
+                method: "POST",
+                data: { 
+                    query: graphQuery,
+                    variables: {
+                        name: req.headers.querysearch
+                    }
+                }
+            }).then((ok)=>{
+                res.json(ok.data.data.Page.media)
+            })
+        //} 
+
+        manga = []
+        
         manga.forEach(async (elem, index, array) => {
             const Cover = await requireCover(elem.mainCover.id)
             const Chapters = await requireChapter(elem.id)
@@ -49,15 +70,15 @@ module.exports = {
                 urlCover: `https://uploads.mangadex.org//covers/${elem.id}/${Cover.data.data.attributes.fileName}`,
                 tags: Tags,
             })
-            
+
             itemsProcessed++
             if (itemsProcessed === array.length) {
                 callback()
             }
         })
-        
+
         function callback() {
-            res.json(mangaList)
+            res.json(graphQuery)
         }
     },
 }
