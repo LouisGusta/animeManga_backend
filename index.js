@@ -6,16 +6,12 @@ const conn = require('./db/conn')
 const port = 9000
 const app = express()
 
-conn()
+conn() 
 
 app.use(cors())
 app.use(express.json())
 app.use(routes)
 
-try {
-    app.listen(process.env.port || port, () => {
-        console.log(`Server running at: http://localhost:${port}`)
-    })
-} catch (error){
-    console.log(error)
-}
+app.listen(process.env.port || port, () => {
+    console.log(`Server running at: http://localhost:${port}`)
+})

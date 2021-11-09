@@ -4,12 +4,17 @@ const routes = express.Router()
 // Define route test
 routes.get('/', (req, res) => res.json({"status": "API Running"}))
 
-// Define route Login
-const returnLogin = require('../src/controllers/login/login')
+// Define route Login / Register
+const returnAccess = require('../src/controllers/access/access')
 
-routes.get('/login', returnLogin.login)
+routes.post('/login', returnAccess.login)
+routes.post('/register', returnAccess.register)
 
- 
+// Define route - Profile
+const returnProfile = require('../src/controllers/perfil/perfil')
+
+routes.get('/profile', returnProfile.indexProfile)
+
 // Define routes - Manga
 const searchManga = require('../src/controllers/manga/search')
 const returnManga = require('../src/controllers/manga/resume')
