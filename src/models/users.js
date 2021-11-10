@@ -5,7 +5,7 @@ const userSchema = new Schema({
         type: Date,
         default: Date.now()
     },
-    creted: {
+    created: {
         type: Date,
         default: Date.now()
     },

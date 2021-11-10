@@ -22,6 +22,7 @@ const returnManga = require('../src/controllers/manga/resume')
 routes.get('/manga/search', searchManga.indexManga)
 routes.get('/manga/resume', returnManga.returnInfo)
 routes.get('/manga/characters', returnManga.returnCharacter)
+routes.get('/manga/staff', returnManga.returnStaff)
 
 // Define routes - Anime
 const searchAnime = require('../src/controllers/anime/search')
