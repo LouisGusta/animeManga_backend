@@ -30,4 +30,9 @@ const searchAnime = require('../src/controllers/anime/search')
 
 routes.get('/anime/search', searchAnime.indexAnime)
 
+
+// Define routes - Chat
+const chat = require('../src/controllers/chat/chat')
+routes.put('/chat', chat.room)
+
 module.exports = routes

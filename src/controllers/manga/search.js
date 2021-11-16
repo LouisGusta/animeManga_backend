@@ -46,7 +46,6 @@ module.exports = {
                 }
             }
         }).then((ok) => {
-            console.log(ok.data.data.Page.media)
             res.json(ok.data.data.Page.media)
         })
     },
