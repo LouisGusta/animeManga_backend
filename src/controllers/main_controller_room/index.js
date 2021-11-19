@@ -63,36 +63,37 @@ module.exports.indexRoom = (socket_io) => {
             idRoom = crypto.randomBytes(3).toString("hex")
         }
         roomActive.push({ idRoom, nameRoom, passwordRoom, limitRoom })
-        usersActive.push({ idRoom, participants: [idUser], participantsSocket: [socket_io.id] })
+        usersActive.push({ idRoom, participants: [{ idUser, idSocket: socket_io.id }] })
 
         socket_io.join(idRoom)
         socket_io.emit("returnRoom", { idRoom, idSocket: socket_io.id })
     })
 
     socket_io.on('leaveRoom', async ({ idRoom, idUser, idSocket }) => {
-        const _user = usersActive.find(x => x.idRoom === idRoom).participants.indexOf(idUser)
-        const _socket = usersActive.find(x => x.idRoom === idRoom).participantsSocket.indexOf(idSocket)
+        const _iUser = usersActive.find(x => x.idRoom === idRoom).participants.indexOf(idUser)
+        const _iSocket = usersActive.find(x => x.idRoom === idRoom).participantsSocket.indexOf(idSocket)
 
-        if (_user > -1) {
-            usersActive.find(x => x.idRoom === idRoom).participants.splice(_user, 1)
-        }
-        if (_socket > -1) {
-            usersActive.find(x => x.idRoom === idRoom).participantsSocket.splice(_socket, 1)
+        if (_iUser > -1) {
+            usersActive.find(x => x.idRoom === idRoom).participants.splice(_iUser, 1)
         }
 
         await socket_io.in(idSocket).disconnectSockets(true)
     })
 
     socket_io.on("disconnect", () => {
-        const _iUsersActive = usersActive.map((x, i) => (x.participantsSocket.find(y => y === socket_io.id) ? [i, _id = x.idRoom, _lenUsers = x.participants.length] : '')).find(y => y != '')
-        const _iRoomActive = roomActive.map((x, i)=>x.idRoom===_id ? i : '').find(y => y != '')
+        const _iUsersActive = usersActive.map((x, i) => (x.participants.find(y => y.idSocket === socket_io.id) ? [i, _id = x.idRoom, _lenUsers = x.participants.length] : '')).find(y => y != '')
 
-        console.log(_iUsersActive)
+        const _iRoomActive = roomActive.map((x, i) => x.idRoom === _id ? i : '')
 
-        if (_iUsersActive[1] && _lenUsers === 1) {
-            console.log('coe')
+        const _iUser = usersActive.find(x => x.idRoom === _id).participants.map((y, i) => y.idSocket === socket_io.id ? i : '').find(z => z != '')
+
+        if (_iUser > -1) {
+            usersActive.find(x => x.idRoom === idRoom).participants.splice(_iUser, 1)
+        }
+
+        if (_iUsersActive[0] > -1 && _lenUsers === 1 && _iRoomActive > -1) {
+            usersActive.splice(_iUsersActive[0], 1)
             roomActive.splice(_iRoomActive, 1)
-            usersActive.splice(_iUsersActive, 1) 
             delete socket_io.adapter.rooms[socket_io.id]
         }
     })
