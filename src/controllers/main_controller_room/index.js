@@ -18,7 +18,7 @@ module.exports.indexRoom = (socket_io) => {
         roomActive.forEach(room => {
             if (room.idRoom == checkIdRoom) {
                 if (room.passwordRoom == checkPasswordRoom) {
-                    console.log('bem vindo mané')
+                    return
                 }
                 else {
                     console.log('senha errada zé')
@@ -36,10 +36,9 @@ module.exports.indexRoom = (socket_io) => {
     socket_io.on('listUsers', (data) => {
         console.log(`usersActive`)
         console.log(usersActive)
-        console.log(`roomActive`)
+        //console.log(`roomActive`)
         console.log(roomActive)
-        console.log(`socket_io.adapter.rooms`)
-        console.log(socket_io.adapter.rooms)
+        //console.log(socket_io.adapter.rooms)
     })
 
     socket_io.on('joinRoom', ({ idRoom, idUser, passwordRoom }) => {
@@ -85,13 +84,16 @@ module.exports.indexRoom = (socket_io) => {
     })
 
     socket_io.on("disconnect", () => {
-        const _room = usersActive.map(x => (x.participantsSocket.find(y => y === socket_io.id) ? [_id = x.idRoom, _lenUsers = x.participants.length] : '')).indexOf(_id)
-        console.log(_id + ' ' + _lenUsers + ' ' + _room)
-        if (_room > -1 && _lenUsers > 0) {
-            usersActive.splice(_room, 1)
+        const _iUsersActive = usersActive.map((x, i) => (x.participantsSocket.find(y => y === socket_io.id) ? [i, _id = x.idRoom, _lenUsers = x.participants.length] : '')).find(y => y != '')
+        const _iRoomActive = roomActive.map((x, i)=>x.idRoom===_id ? i : '').find(y => y != '')
+
+        console.log(_iUsersActive)
+
+        if (_iUsersActive[1] && _lenUsers === 1) {
+            console.log('coe')
+            roomActive.splice(_iRoomActive, 1)
+            usersActive.splice(_iUsersActive, 1) 
             delete socket_io.adapter.rooms[socket_io.id]
         }
-
-        //socket_io.broadcast.emit("sayGoodBye");
     })
 }

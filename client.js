@@ -4,7 +4,7 @@ socket = io('http://localhost:9000/room')
 //socket.emit('createRoom', {roomName: 'teste', roomPassword: 'senha123', roomLimit: 5})
 
 
-socket.emit('joinRoom', { idRoom: 'c56431', passwordRoom: '', idUser: 'Maicão' })
+socket.emit('joinRoom', { idRoom: '7698df', passwordRoom: '', idUser: 'Maicão' })
 
 
 socket.on('returnRoom', (data) => {
