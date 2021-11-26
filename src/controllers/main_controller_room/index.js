@@ -73,23 +73,17 @@ module.exports.indexRoom = (socket_io) => {
         const _iUser = usersActive.find(x => x.idRoom === idRoom).participants.indexOf(idUser)
         const _iSocket = usersActive.find(x => x.idRoom === idRoom).participantsSocket.indexOf(idSocket)
 
-        if (_iUser > -1) {
-            usersActive.find(x => x.idRoom === idRoom).participants.splice(_iUser, 1)
-        }
+        _User > -1 && usersActive.find(x => x.idRoom === idRoom).participants.splice(_iUser, 1)
 
         await socket_io.in(idSocket).disconnectSockets(true)
     })
 
     socket_io.on("disconnect", () => {
         const _iUsersActive = usersActive.map((x, i) => (x.participants.find(y => y.idSocket === socket_io.id) ? [i, _id = x.idRoom, _lenUsers = x.participants.length] : '')).find(y => y != '')
-
         const _iRoomActive = roomActive.map((x, i) => x.idRoom === _id ? i : '')
-
         const _iUser = usersActive.find(x => x.idRoom === _id).participants.map((y, i) => y.idSocket === socket_io.id ? i : '').find(z => z != '')
 
-        if (_iUser > -1) {
-            usersActive.find(x => x.idRoom === idRoom).participants.splice(_iUser, 1)
-        }
+        _iUser > -1 && usersActive.find(x => x.idRoom === idRoom).participants.splice(_iUser, 1)
 
         if (_iUsersActive[0] > -1 && _lenUsers === 1 && _iRoomActive > -1) {
             usersActive.splice(_iUsersActive[0], 1)
